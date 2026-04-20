@@ -81,4 +81,5 @@ exec bash -l
 This prompt uses Nerd Font glyphs. If the separators render incorrectly, configure a Nerd Font in your terminal.
 
 ## Shell Output Example
-[](./calabi-shell.png)
+![Calabi Shell](https://github.com/gprocunier/calabi-shell/blob/main/calabi-shell.png)
+
