@@ -79,3 +79,6 @@ exec bash -l
 ## Notes
 
 This prompt uses Nerd Font glyphs. If the separators render incorrectly, configure a Nerd Font in your terminal.
+
+## Shell Output Example
+[](./calabi-shell.png)
