@@ -1,0 +1,72 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = false
+scan_timeout = 30
+command_timeout = 1200
+
+format = """
+${custom.krb_banner}\
+[](#3B4252)\
+$username\
+$hostname\
+[](bg:#434C5E fg:#3B4252)\
+$directory\
+[](fg:#434C5E bg:#33658A)\
+$time\
+[ ](fg:#33658A)\
+"""
+
+[username]
+show_always = true
+style_user = "bg:#3B4252 fg:#ECEFF4"
+style_root = "bg:#3B4252 fg:#ECEFF4"
+format = '[$user]($style)'
+
+[hostname]
+ssh_only = false
+trim_at = "."
+style = "bg:#3B4252 fg:#ECEFF4"
+format = '[@$hostname ]($style)'
+
+[directory]
+style = "bg:#434C5E fg:#ECEFF4"
+format = '[ $path ]($style)'
+truncation_length = 3
+truncation_symbol = "…/"
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+
+[time]
+disabled = false
+time_format = "%R"
+style = "bg:#33658A fg:#ECEFF4"
+format = '[ $time ]($style)'
+
+[custom.krb_banner]
+when = "klist -s >/dev/null 2>&1"
+shell = ["bash", "--noprofile", "--norc"]
+command = '''
+klist_out="$(LC_ALL=C klist 2>/dev/null)"
+principal="$(printf '%s\n' "$klist_out" | awk -F': ' '/^Default principal:/ {print $2; exit}')"
+expires_raw="$(printf '%s\n' "$klist_out" | awk '/ krbtgt\// {print $3 " " $4; exit}')"
+
+[ -n "$principal" ] || exit 1
+[ -n "$expires_raw" ] || exit 1
+
+expires_epoch="$(LC_ALL=C date -d "$expires_raw" +%s 2>/dev/null || true)"
+[ -n "$expires_epoch" ] || exit 1
+
+now_epoch="$(date +%s)"
+remaining="$((expires_epoch - now_epoch))"
+[ "$remaining" -gt 0 ] || exit 1
+
+days="$((remaining / 86400))"
+hours="$(((remaining % 86400) / 3600))"
+minutes="$(((remaining % 3600) / 60))"
+printf '%s\n' "[](fg:#6B5117)[ Kerberos ](bg:#6B5117 fg:#ECEFF4)[](fg:#6B5117 bg:#87671D)[ ${principal} ](bg:#87671D fg:#ECEFF4)[](fg:#87671D bg:#A88424)[ TTL ](bg:#A88424 fg:#2E3440)[](fg:#A88424 bg:#E0B85A)[ $(printf '%02d:%02d:%02d' "$days" "$hours" "$minutes") ](bg:#E0B85A fg:#2E3440)[](fg:#E0B85A)"
+'''
+format = "$output\n"
