@@ -82,4 +82,4 @@ This prompt uses Nerd Font glyphs. If the separators render incorrectly, configu
 
 ## Shell Output Example
 ![Calabi Shell](https://github.com/gprocunier/calabi-shell/blob/main/calabi-shell.png)
-
+*a user without a kerberos session ticket tries to log in via krb sso as sysop to idm-01 and fails. They then get a session ticket from the domain for sysop@WORKSHOP.LAN and are able to sso in.  the before ticket and after ticket is visualized in the shell aesthetically, but the real thing is that krb/gss sso is a thing*
