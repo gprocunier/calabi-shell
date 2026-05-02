@@ -11,7 +11,7 @@ This work is based on the general approach of Chris Titus Tech's [mybash](https:
 - RHEL 10+
 - Fedora 43+
 
-The installer enforces this in code by checking `/etc/os-release` and refusing to run on other operating systems or older releases.
+The installer enforces this by checking `/etc/os-release` and refusing to run on unsupported platforms. Use `--force` to bypass this check on other distributions — this is not validated and may require manual adjustments.
 
 ## What it does
 
@@ -60,6 +60,16 @@ exec bash -l
 sudo ./install.sh --system
 exec bash -l
 ```
+
+## Install on unsupported platforms
+
+```bash
+./install.sh --force
+# or
+sudo ./install.sh --system --force
+```
+
+The `--force` flag bypasses the distribution check. A warning is logged but installation proceeds. This is not validated — Starship and Nerd Fonts should work on most Linux distributions, but the managed block format and profile paths may need adjustment.
 
 ## Uninstall
 
