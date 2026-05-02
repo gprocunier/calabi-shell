@@ -5,13 +5,15 @@ APP_NAME="calabi-shell"
 BEGIN_MARKER="# >>> ${APP_NAME} >>>"
 END_MARKER="# <<< ${APP_NAME} <<<"
 MODE="user"
+FORCE=false
 
 usage() {
   cat <<USAGE
-Usage: $0 [--system]
+Usage: $0 [--system] [--force]
 
 Options:
   --system   Install as a system-wide Bash default. Requires root.
+  --force    Bypass distribution check (unsupported platforms are not validated).
   -h, --help Show this help.
 USAGE
 }
@@ -20,6 +22,9 @@ for arg in "$@"; do
   case "$arg" in
     --system)
       MODE="system"
+      ;;
+    --force)
+      FORCE=true
       ;;
     -h|--help)
       usage
@@ -88,17 +93,23 @@ check_platform_support() {
   . "$os_release"
 
   local major="${VERSION_ID%%.*}"
+  local supported=false
   case "${ID:-}" in
     fedora)
-      [ "$major" -ge 43 ] || fail "unsupported platform: Fedora ${VERSION_ID:-unknown}. calabi-shell supports Fedora 43+ only"
+      [ "$major" -ge 43 ] && supported=true
       ;;
     rhel)
-      [ "$major" -ge 10 ] || fail "unsupported platform: RHEL ${VERSION_ID:-unknown}. calabi-shell supports RHEL 10+ only"
-      ;;
-    *)
-      fail "unsupported platform: ${PRETTY_NAME:-${ID:-unknown}}. calabi-shell supports Fedora 43+ and RHEL 10+ only"
+      [ "$major" -ge 10 ] && supported=true
       ;;
   esac
+
+  if ! $supported; then
+    if $FORCE; then
+      log "WARNING: unsupported platform: ${PRETTY_NAME:-${ID:-unknown}} (--force: proceeding anyway, this is not validated)"
+    else
+      fail "unsupported platform: ${PRETTY_NAME:-${ID:-unknown}}. Supported: Fedora 43+, RHEL 10+. Use --force to bypass (not validated)"
+    fi
+  fi
 }
 
 ensure_prereqs() {
