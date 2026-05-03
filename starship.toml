@@ -71,7 +71,6 @@ minutes="$(((remaining % 3600) / 60))"
 ttl="$(printf '%02d:%02d:%02d' "$days" "$hours" "$minutes")"
 
 reset=$'\033[0m'
-bg_reset=$'\033[49m'
 fg_light=$'\033[38;2;236;239;244m'
 fg_dark=$'\033[38;2;46;52;64m'
 fg_label=$'\033[38;2;107;81;23m'
@@ -84,8 +83,8 @@ bg_ttl=$'\033[48;2;168;132;36m'
 bg_time=$'\033[48;2;224;184;90m'
 
 printf '%s%s%s Kerberos %s%s%s%s %s %s%s%s%s TTL %s%s%s%s %s %s%s%s\n' \
-  "$fg_label" "$bg_reset" \
-  "$bg_label" "$fg_light" \
+  "$fg_label" "$bg_label" \
+  "$fg_light" \
   "$fg_label" "$bg_ident" \
   "$fg_light" "$bg_ident" "$principal" \
   "$fg_ident" "$bg_ttl" \
